@@ -18,8 +18,8 @@ App.controller('GameBoard', ['$scope', 'ShutTheBox', function($scope, ShutTheBox
 	$scope.rollDice = function() {
 		$scope.dice1 = dice[Math.floor(Math.random() * dice.length)];
 		$scope.dice2 = dice[Math.floor(Math.random() * dice.length)];
-		$scope.dice1 = parseInt(prompt('Enter number:'));
-		$scope.dice2 = parseInt(prompt('Enter number:'));
+		// $scope.dice1 = parseInt(prompt('Enter number:'));
+		// $scope.dice2 = parseInt(prompt('Enter number:'));
 		$scope.diceTotal = $scope.dice1 + $scope.dice2;
 		$scope.canPlay = true;
 		// Check if game ended
