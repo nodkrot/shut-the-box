@@ -7,5 +7,6 @@ Install environment:
 ```
 npm install
 bower install
-grunt
+grunt // Compile assets once
+grunt dev // To watch the changes
 ```
