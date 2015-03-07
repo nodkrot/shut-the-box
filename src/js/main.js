@@ -5,8 +5,9 @@ App.controller('GameBoard', ['$scope', 'ShutTheBox', function($scope, ShutTheBox
 	$scope.initGame = function() {
 		ShutTheBox.prepareNumbers();
 		$scope.numbers = ShutTheBox.numbers;
-		$scope.canPlay = false;
 		$scope.diceTotal = 0;
+		$scope.canPlay = false;
+		$scope.disableTurnButton = true;
 		$scope.dice1 = $scope.dice2 = '';
 	};
 
@@ -19,13 +20,21 @@ App.controller('GameBoard', ['$scope', 'ShutTheBox', function($scope, ShutTheBox
 		$scope.dice2 = dice[Math.floor(Math.random() * dice.length)];
 		$scope.diceTotal = $scope.dice1 + $scope.dice2;
 		$scope.canPlay = true;
+		// Check if game ended
+		if (!ShutTheBox.IsThereMorePossibilies($scope.diceTotal)) {
+			alert('Game Over');
+		}
 	};
 
 	$scope.endTurn = function() {
 		if (!$scope.diceTotal) {
 			ShutTheBox.lockNumbers();
 			$scope.canPlay = false;
+			$scope.disableTurnButton = true;
 			$scope.dice1 = $scope.dice2 = '';
+			if (!ShutTheBox.getActiveNumbers().length) {
+				alert('Shut The Box');
+			}
 		}
 	};
 
@@ -33,20 +42,19 @@ App.controller('GameBoard', ['$scope', 'ShutTheBox', function($scope, ShutTheBox
 		if (angular.element('.game-numbers').hasClass('disabled')) {
 			return;
 		}
-		if (this.n.state === 'open') {
+		if (this.n.state === 'open') { // User chooses a number
 			if (this.n.number <= $scope.diceTotal) {
 				this.n.state = 'chosen';
 				$scope.diceTotal = $scope.diceTotal - this.n.number;
+				if (!$scope.diceTotal) {
+					$scope.disableTurnButton = false;
+				}
 			}
-		} else if (this.n.state === 'chosen') {
+		} else if (this.n.state === 'chosen') { // User changed mind, unset sum
 			this.n.state = 'open';
 			$scope.diceTotal = $scope.diceTotal + this.n.number;
+			$scope.disableTurnButton = true;
 		}
-		// TODO subset check
-		// if (ShutTheBox.getRemainingSum() < $scope.diceTotal) {
-
-		// }
-
 	};
 
 }])
@@ -66,14 +74,7 @@ App.controller('GameBoard', ['$scope', 'ShutTheBox', function($scope, ShutTheBox
 		return this;
 	};
 
-	gameLogic.getRemainingSum = function() {
-		var r = 0;
-		this.numbers.forEach(function(v) {
-			r += v.number;
-		});
-		return r;
-	};
-
+	// Close numbers that were selected
 	gameLogic.lockNumbers = function() {
 		this.numbers.forEach(function(v) {
 			if (v.state === 'chosen') {
@@ -83,53 +84,42 @@ App.controller('GameBoard', ['$scope', 'ShutTheBox', function($scope, ShutTheBox
 		return this;
 	};
 
-	// https://gist.github.com/lrvick/1381084
-	// var subset_sum = function(items, target) {
-	// 	var perms = [],
-	// 		layer = 0,
-	// 		depth = 2,
-	// 		attempts = 0,
-	// 		sum, perm,
-	// 		ss = function(items) {
-	// 			var item = items.shift();
-	// 			for (i = 0; i < items.length; i++) {
-	// 				attempts = attempts + 1;
-	// 				if (attempts <= items.length * items.length) {
-	// 					if (layer === 0) {
-	// 						perm = [items[0], items[i]];
-	// 					} else {
-	// 						perm = perms.shift();
-	// 						perm.push(items[0]);
-	// 					}
-	// 					sum = 0;
-	// 					for (j = 0; j < perm.length; j++) {
-	// 						sum += perm[j];
-	// 					}
-	// 					perms.push(perm);
-	// 					if (sum == target) {
-	// 						return perm;
-	// 					}
-	// 				} else {
-	// 					if (layer < depth) {
-	// 						attempts = 0;
-	// 						layer = layer + 1;
-	// 					} else {
-	// 						return null;
-	// 					}
-	// 				}
-	// 			}
-	// 			items.push(item);
-	// 			return ss(items);
-	// 		}
-	// 	return ss(items)
-	// };
+	// Get numbers that are still in the game
+    gameLogic.getActiveNumbers = function() {
+    	var r = [];
+    	this.numbers.forEach(function(v) {
+    		if (v.state === 'open') {
+    			r.push(v.number);
+    		}
+		});
+		return r;
+    };
 
-	// items = [1, 2, 3, 4, 5];
+    gameLogic.IsThereMorePossibilies = function(s) {
+    	var stack = [],
+	    	sumInStack = 0,
+	    	results = [],
+	    	// http://codereview.stackexchange.com/questions/36214/find-all-subsets-of-an-int-array-whose-sums-equal-a-given-target
+			subsetSums = function(data, fromIndex, endIndex, sum) {
+		        if (sumInStack == sum) {
+		            results.push(stack.slice());
+		        }
+		    	for (var currentIndex = fromIndex; currentIndex < endIndex; currentIndex++) {
 
-	// target = 6;
+		            if (sumInStack + data[currentIndex] <= sum) {
+		                stack.push(data[currentIndex]);
+		                sumInStack += data[currentIndex];
 
-	// result = subset_sum(items, target);
-	// console.log(result);
+		                subsetSums(data, currentIndex + 1, endIndex, sum);
+		                sumInStack -= stack.pop();
+		            }
+		        }
+		    };
+		var items = gameLogic.getActiveNumbers();
+		// console.log(s, items);
+	    subsetSums(items, 0, items.length, s);
+	    return !!results.length;
+    };
 
 	return gameLogic;
 
