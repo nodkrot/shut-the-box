@@ -15,9 +15,11 @@ App.controller('GameBoard', ['$scope', 'ShutTheBox', function($scope, ShutTheBox
 
 	var dice = [1, 2, 3, 4, 5, 6];
 
-	$scope.rollDice = function(x) {
+	$scope.rollDice = function() {
 		$scope.dice1 = dice[Math.floor(Math.random() * dice.length)];
 		$scope.dice2 = dice[Math.floor(Math.random() * dice.length)];
+		$scope.dice1 = parseInt(prompt('Enter number:'));
+		$scope.dice2 = parseInt(prompt('Enter number:'));
 		$scope.diceTotal = $scope.dice1 + $scope.dice2;
 		$scope.canPlay = true;
 		// Check if game ended
@@ -33,7 +35,8 @@ App.controller('GameBoard', ['$scope', 'ShutTheBox', function($scope, ShutTheBox
 			$scope.disableTurnButton = true;
 			$scope.dice1 = $scope.dice2 = '';
 			if (!ShutTheBox.getActiveNumbers().length) {
-				alert('Shut The Box');
+				$scope.canPlay = true;
+				alert('Shut The Box!');
 			}
 		}
 	};
@@ -64,9 +67,9 @@ App.controller('GameBoard', ['$scope', 'ShutTheBox', function($scope, ShutTheBox
 	var gameLogic = {};
 
 	gameLogic.prepareNumbers = function() {
-		gameLogic.numbers = [];
+		this.numbers = [];
 		for (var i = 1; i < 10; i++) {
-			gameLogic.numbers.push({
+			this.numbers.push({
 				number: i,
 				state: 'open'
 			});
@@ -115,7 +118,7 @@ App.controller('GameBoard', ['$scope', 'ShutTheBox', function($scope, ShutTheBox
 		            }
 		        }
 		    };
-		var items = gameLogic.getActiveNumbers();
+		var items = this.getActiveNumbers();
 		// console.log(s, items);
 	    subsetSums(items, 0, items.length, s);
 	    return !!results.length;
