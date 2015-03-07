@@ -35,7 +35,7 @@ module.exports = function(grunt) {
                 options: { 
                     compass: true,
                     noCache: true,
-                    style: 'expanded' // or compressed
+                    style: 'compressed' // expanded or compressed
                 },
                 files: { 
                     'app/css/main.css': 'src/sass/main.scss'
@@ -66,7 +66,7 @@ module.exports = function(grunt) {
     grunt.registerTask('default', [
         'concat:frontend',
         'uglify:frontend',
-        'sass'
+        'sass:dist'
     ]);
 
 };

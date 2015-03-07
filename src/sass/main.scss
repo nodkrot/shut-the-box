@@ -1,0 +1,85 @@
+$icon-font-path: "../bower_components/bootstrap-sass-official/assets/fonts/bootstrap/";
+@import "../../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap";
+
+// Variables
+$gray: #ECECEC;
+$orange: #E87E04;
+$blue: #22A7F0;
+
+body {
+	background-color: $gray;
+}
+
+.game-board {
+
+	.game-numbers {
+		@extend .list-inline;
+		margin: 0;
+
+		.game-number {
+			height: 188px;
+			width: 112px;
+			background-color: $orange;
+			line-height: 188px;
+			color: #fff;
+			font-size: 90px;
+			margin: 0 8px 12px 0;
+			text-align: center;
+			border-radius: 15px;
+			cursor: pointer;
+			@include transition-property(box-shadow);
+		    @include transition-duration(0.24s);
+
+		    &:last-child {
+		    	margin-right: 0;
+		    }
+
+		    &.chosen {
+		    	background-color: #F4B350;
+		    }
+
+		    &.disabled {
+		    	cursor: default;
+		    	background-color: $blue;
+		    }
+
+			&:not(.disabled):hover {
+				box-shadow: 0 0 0 2px $orange;
+			}
+		}
+	}
+
+	.game-dice {
+		margin: 12px 0 24px;
+		font-size: 0;
+		.box {
+			display: inline-block;
+			width: 88px;
+			height: 88px;
+			line-height: 88px;
+			font-size: 40px;
+			text-align: center;
+			cursor: default;
+			vertical-align: middle;
+			border: 2px solid #333;
+
+			&.die-box {
+				border-radius: 6px;
+				background: #fff;
+
+				&:first-child {
+					margin-right: 8px;
+				}
+			}
+			&.sum-box {
+				border-radius: 50%;
+				margin-left: 44px;
+
+			}
+		}
+	}
+
+	.game-actions {
+		margin: 0 0 24px;
+	}
+}
