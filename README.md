@@ -1,4 +1,4 @@
-# shut-the-box
+# Shut The Box
 
 ```
 npm install
