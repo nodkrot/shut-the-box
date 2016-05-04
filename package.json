@@ -8,8 +8,8 @@
     "grunt-contrib-sass": "^0.9.2"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "echo \"Error: no build specified\" && exit 1"
+    "test": "echo \"Error: no test specified\"",
+    "start": "echo \"Error: no build specified\""
   },
   "engines": {
     "node": ">=0.10.0"
